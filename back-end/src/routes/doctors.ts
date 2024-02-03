@@ -7,7 +7,6 @@ const router = express.Router();
 router.post("/", async (req, res) => {
 	try {
 		const newDoctor = new DoctorModel(req.body);
-		console.log("Received request body:", req.body);
 		const savedDoctor = await newDoctor.save();
 		res.status(201).json(savedDoctor);
 	} catch (error) {
@@ -28,7 +27,6 @@ router.get("/", async (req, res) => {
 // GET method to get doctors by language
 router.get("/language/:language", async (req, res) => {
 	const { language } = req.params;
-
 	try {
 		const doctors = await DoctorModel.find({ languages: language });
 		res.status(200).json(doctors);
@@ -40,14 +38,11 @@ router.get("/language/:language", async (req, res) => {
 // DELETE method to delete a doctor by ID
 router.delete("/:id", async (req, res) => {
 	const { id } = req.params;
-
 	try {
 		const deletedDoctor = await DoctorModel.findByIdAndDelete(id);
-
 		if (!deletedDoctor) {
 			return res.status(404).json({ error: "Doctor not found" });
 		}
-
 		res.status(200).json(deletedDoctor);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

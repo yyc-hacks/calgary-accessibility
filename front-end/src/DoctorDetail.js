@@ -8,13 +8,10 @@ function DoctorDetail() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/doctors/${id}`) // Replace with your API endpoint
+      .get(`http://localhost:8080/doctors/${id}`) // Adjust as needed for your API endpoint
       .then((response) => {
-        const doctorWithArrayLanguages = {
-          ...response.data,
-          Languages: JSON.parse(response.data.Languages.replace(/'/g, '"')),
-        };
-        setDoctor(doctorWithArrayLanguages);
+        // Directly use the data without needing to parse languages
+        setDoctor(response.data);
       })
       .catch((error) => {
         console.error("Error fetching doctor data:", error);
@@ -25,15 +22,18 @@ function DoctorDetail() {
     return <div>Loading...</div>;
   }
 
+  // Update to reflect your schema
   return (
     <div>
       <h1>Doctor Details</h1>
-      <h2>{doctor.Name}</h2>
-      <p>Location: {doctor.Location}</p>
-      <p>Practice Discipline: {doctor["Practice Discipline"]}</p>
-      <p>Gender: {doctor.Gender}</p>
-      <p>Languages: {doctor.Languages.join(", ")}</p>
-      {/* Add more fields as needed */}
+      <h2>{doctor.name}</h2>
+      <p>Location: {doctor.location}</p>
+      <p>Phone Number: {doctor.phone_number || "N/A"}</p>
+      <p>Fax Number: {doctor.fax_number || "N/A"}</p>
+      <p>Practice Discipline: {doctor.practice_discipline.join(", ")}</p>
+      <p>Gender: {doctor.gender}</p>
+      <p>Languages: {doctor.languages.join(", ")}</p>
+      <p>Accepting Patients: {doctor.accepting_patients ? "Yes" : "No"}</p>
     </div>
   );
 }

@@ -7,11 +7,9 @@ function App() {
   const [filterGender, setFilterGender] = useState("");
 
   useEffect(() => {
-    // Replace 'YOUR_BACKEND_API_ENDPOINT_HERE' with your actual backend API endpoint
     axios
       .get("http://localhost:8080/doctors")
       .then((response) => {
-        // Convert the Languages property from a string to an array
         const doctorsWithArrayLanguages = response.data.map((doctor) => ({
           ...doctor,
           Languages: JSON.parse(doctor.Languages.replace(/'/g, '"')),
@@ -47,7 +45,6 @@ function App() {
           <option value="">All</option>
           <option value="English">English</option>
           <option value="Spanish">Spanish</option>
-          {/* Add more language options here */}
         </select>
       </div>
       <div>
@@ -56,7 +53,6 @@ function App() {
           <option value="">All</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
-          {/* Add more gender options here */}
         </select>
       </div>
       <div>

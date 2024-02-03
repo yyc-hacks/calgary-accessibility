@@ -24,4 +24,16 @@ router.get("/", async (req, res) => {
 	}
 });
 
+// GET method to get doctors by language
+router.get("/language/:language", async (req, res) => {
+	const { language } = req.params;
+
+	try {
+		const doctors = await DoctorModel.find({ languages: language });
+		res.status(200).json(doctors);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 export default router;

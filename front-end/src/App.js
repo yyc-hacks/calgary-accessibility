@@ -1,15 +1,27 @@
-import React, { useState } from "react";
-
-const initialDoctorList = [
-  { id: 1, name: "Dr. John Doe", language: "English", gender: "Male" },
-  { id: 2, name: "Dr. Jane Smith", language: "Spanish", gender: "Female" },
-  // Add more doctor data here
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const [doctorList, setDoctorList] = useState(initialDoctorList);
+  const [doctorList, setDoctorList] = useState([]);
   const [filterLanguage, setFilterLanguage] = useState("");
   const [filterGender, setFilterGender] = useState("");
+
+  useEffect(() => {
+    // Replace 'YOUR_BACKEND_API_ENDPOINT_HERE' with your actual backend API endpoint
+    axios
+      .get("http://localhost:8080/doctors")
+      .then((response) => {
+        // Convert the Languages property from a string to an array
+        const doctorsWithArrayLanguages = response.data.map((doctor) => ({
+          ...doctor,
+          Languages: JSON.parse(doctor.Languages.replace(/'/g, '"')),
+        }));
+        setDoctorList(doctorsWithArrayLanguages);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
   const handleLanguageChange = (e) => {
     setFilterLanguage(e.target.value);
@@ -20,8 +32,9 @@ function App() {
   };
 
   const filteredDoctors = doctorList.filter((doctor) => {
-    const languageMatch = !filterLanguage || doctor.language === filterLanguage;
-    const genderMatch = !filterGender || doctor.gender === filterGender;
+    const languageMatch =
+      !filterLanguage || doctor.Languages.includes(filterLanguage);
+    const genderMatch = !filterGender || doctor.Gender === filterGender;
     return languageMatch && genderMatch;
   });
 
@@ -50,9 +63,9 @@ function App() {
         <h2>Doctors List</h2>
         <ul>
           {filteredDoctors.map((doctor) => (
-            <li key={doctor.id}>
-              {doctor.name} - Language: {doctor.language}, Gender:{" "}
-              {doctor.gender}
+            <li key={doctor._id}>
+              {doctor.Name} - Language: {doctor.Languages.join(", ")}, Gender:{" "}
+              {doctor.Gender}
             </li>
           ))}
         </ul>

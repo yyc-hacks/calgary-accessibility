@@ -1,31 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"; // Import Link
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
 
 function App() {
   const [doctorList, setDoctorList] = useState([]);
-  const [filterLanguage, setFilterLanguage] = useState("Sidhi"); // Set "Sidhi" as the default value
+  const [filterLanguage, setFilterLanguage] = useState("Sidhi");
   const [filterGender, setFilterGender] = useState("");
-  const [allLanguages, setAllLanguages] = useState([]); // Store all unique languages
+  const [allLanguages, setAllLanguages] = useState([]);
 
   useEffect(() => {
     axios
       .get("http://localhost:8080/doctors")
       .then((response) => {
-        // Directly use the languages array from the response, no need for JSON parsing
         setDoctorList(response.data);
-
-        // Extract unique languages from the doctors and store them in allLanguages state
         const uniqueLanguages = new Set(
           response.data.reduce((acc, doctor) => {
-            acc.push(...doctor.languages); // Note the lowercase 'languages'
+            acc.push(...doctor.languages);
             return acc;
           }, [])
         );
-
-        // Ensure "Sidhi" is in the list of languages
         uniqueLanguages.add("Sidhi");
-
         setAllLanguages(Array.from(uniqueLanguages));
       })
       .catch((error) => {
@@ -41,6 +36,7 @@ function App() {
     setFilterGender(e.target.value);
   };
 
+  // Define 'filteredDoctors' here
   const filteredDoctors = doctorList.filter((doctor) => {
     const languageMatch =
       !filterLanguage || doctor.languages.includes(filterLanguage);
@@ -49,38 +45,53 @@ function App() {
   });
 
   return (
-    <div className="App">
-      <h1>Doctor Search App</h1>
-      <div>
-        <label>Filter by Language:</label>
-        <select value={filterLanguage} onChange={handleLanguageChange}>
-          <option value="Sidhi">Sidhi</option>
-          {allLanguages.map((language) => (
-            <option key={language} value={language}>
-              {language}
-            </option>
-          ))}
-        </select>
+    <div className="App container mt-5">
+      <h1 className="mb-3">Doctor Search App</h1>
+      <div className="row g-3 align-items-center justify-content-center">
+        <div className="col-auto">
+          <label htmlFor="languageSelect" className="form-label">
+            Filter by Language
+          </label>
+          <select
+            id="languageSelect"
+            className="form-select"
+            value={filterLanguage}
+            onChange={handleLanguageChange}
+          >
+            <option value="Sidhi">Sidhi</option>
+            {allLanguages.map((language) => (
+              <option key={language} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-auto">
+          <label htmlFor="genderSelect" className="form-label">
+            Filter by Gender
+          </label>
+          <select
+            id="genderSelect"
+            className="form-select"
+            value={filterGender}
+            onChange={handleGenderChange}
+          >
+            <option value="">All</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <label>Filter by Gender:</label>
-        <select value={filterGender} onChange={handleGenderChange}>
-          <option value="">All</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-      <div>
-        <h2>Doctors List</h2>
-        <ul>
-          {filteredDoctors.map((doctor) => (
-            <li key={doctor._id}>
-              <Link to={`/doctors/${doctor._id}`}>{doctor.name}</Link> -
-              Language: {doctor.languages.join(", ")}, Gender: {doctor.gender}
-            </li> // Wrap doctor's name with Link
-          ))}
-        </ul>
-      </div>
+      <ul className="list-group list-group-flush mt-4">
+        {filteredDoctors.map((doctor) => (
+          <li key={doctor._id} className="list-group-item">
+            <Link to={`/doctors/${doctor._id}`} className="App-link">
+              {doctor.name}
+            </Link>{" "}
+            - Language: {doctor.languages.join(", ")}, Gender: {doctor.gender}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

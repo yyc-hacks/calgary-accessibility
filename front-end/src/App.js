@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom"; // Import Link
 
 function App() {
   const [doctorList, setDoctorList] = useState([]);
-  const [filterLanguage, setFilterLanguage] = useState("");
+  const [filterLanguage, setFilterLanguage] = useState("Sidhi"); // Set "Sidhi" as the default value
   const [filterGender, setFilterGender] = useState("");
   const [allLanguages, setAllLanguages] = useState([]); // Store all unique languages
 
@@ -15,15 +16,17 @@ function App() {
         setDoctorList(response.data);
 
         // Extract unique languages from the doctors and store them in allLanguages state
-        const uniqueLanguages = Array.from(
-          new Set(
-            response.data.reduce((acc, doctor) => {
-              acc.push(...doctor.languages); // Note the lowercase 'languages'
-              return acc;
-            }, [])
-          )
+        const uniqueLanguages = new Set(
+          response.data.reduce((acc, doctor) => {
+            acc.push(...doctor.languages); // Note the lowercase 'languages'
+            return acc;
+          }, [])
         );
-        setAllLanguages(uniqueLanguages);
+
+        // Ensure "Sidhi" is in the list of languages
+        uniqueLanguages.add("Sidhi");
+
+        setAllLanguages(Array.from(uniqueLanguages));
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -40,8 +43,8 @@ function App() {
 
   const filteredDoctors = doctorList.filter((doctor) => {
     const languageMatch =
-      !filterLanguage || doctor.languages.includes(filterLanguage); // Note the lowercase 'languages'
-    const genderMatch = !filterGender || doctor.gender === filterGender; // Note the lowercase 'gender'
+      !filterLanguage || doctor.languages.includes(filterLanguage);
+    const genderMatch = !filterGender || doctor.gender === filterGender;
     return languageMatch && genderMatch;
   });
 
@@ -51,7 +54,7 @@ function App() {
       <div>
         <label>Filter by Language:</label>
         <select value={filterLanguage} onChange={handleLanguageChange}>
-          <option value="">All</option>
+          <option value="Sidhi">Sidhi</option>
           {allLanguages.map((language) => (
             <option key={language} value={language}>
               {language}
@@ -72,9 +75,9 @@ function App() {
         <ul>
           {filteredDoctors.map((doctor) => (
             <li key={doctor._id}>
-              {doctor.name} - Language: {doctor.languages.join(", ")}, Gender:{" "}
-              {doctor.gender}
-            </li>
+              <Link to={`/doctors/${doctor._id}`}>{doctor.name}</Link> -
+              Language: {doctor.languages.join(", ")}, Gender: {doctor.gender}
+            </li> // Wrap doctor's name with Link
           ))}
         </ul>
       </div>

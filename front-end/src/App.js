@@ -5,16 +5,25 @@ function App() {
   const [doctorList, setDoctorList] = useState([]);
   const [filterLanguage, setFilterLanguage] = useState("");
   const [filterGender, setFilterGender] = useState("");
+  const [allLanguages, setAllLanguages] = useState([]); // Store all unique languages
 
   useEffect(() => {
     axios
       .get("http://localhost:8080/doctors")
       .then((response) => {
-        const doctorsWithArrayLanguages = response.data.map((doctor) => ({
-          ...doctor,
-          Languages: JSON.parse(doctor.Languages.replace(/'/g, '"')),
-        }));
-        setDoctorList(doctorsWithArrayLanguages);
+        // Directly use the languages array from the response, no need for JSON parsing
+        setDoctorList(response.data);
+
+        // Extract unique languages from the doctors and store them in allLanguages state
+        const uniqueLanguages = Array.from(
+          new Set(
+            response.data.reduce((acc, doctor) => {
+              acc.push(...doctor.languages); // Note the lowercase 'languages'
+              return acc;
+            }, [])
+          )
+        );
+        setAllLanguages(uniqueLanguages);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -31,8 +40,8 @@ function App() {
 
   const filteredDoctors = doctorList.filter((doctor) => {
     const languageMatch =
-      !filterLanguage || doctor.Languages.includes(filterLanguage);
-    const genderMatch = !filterGender || doctor.Gender === filterGender;
+      !filterLanguage || doctor.languages.includes(filterLanguage); // Note the lowercase 'languages'
+    const genderMatch = !filterGender || doctor.gender === filterGender; // Note the lowercase 'gender'
     return languageMatch && genderMatch;
   });
 
@@ -43,8 +52,11 @@ function App() {
         <label>Filter by Language:</label>
         <select value={filterLanguage} onChange={handleLanguageChange}>
           <option value="">All</option>
-          <option value="English">English</option>
-          <option value="Spanish">Spanish</option>
+          {allLanguages.map((language) => (
+            <option key={language} value={language}>
+              {language}
+            </option>
+          ))}
         </select>
       </div>
       <div>
@@ -60,8 +72,8 @@ function App() {
         <ul>
           {filteredDoctors.map((doctor) => (
             <li key={doctor._id}>
-              {doctor.Name} - Language: {doctor.Languages.join(", ")}, Gender:{" "}
-              {doctor.Gender}
+              {doctor.name} - Language: {doctor.languages.join(", ")}, Gender:{" "}
+              {doctor.gender}
             </li>
           ))}
         </ul>

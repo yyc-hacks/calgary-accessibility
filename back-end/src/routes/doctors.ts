@@ -63,4 +63,22 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// PATCH method to update accepting_patients field by ID
+router.patch("/:id/updateAcceptance", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedDoctor = await DoctorModel.findByIdAndUpdate(
+      id,
+      { accepting_patients: true },
+      { new: true }
+    );
+    if (!updatedDoctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+    res.status(200).json(updatedDoctor);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

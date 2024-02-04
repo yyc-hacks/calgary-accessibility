@@ -2,15 +2,30 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
-import './App.css'; // Your custom CSS after
+import "./App.css"; // Import custom CSS for additional styling
+
+import logoImage from "./logo-no-background.png";
 
 function App() {
   const [doctorList, setDoctorList] = useState([]);
-  const [filterLanguage, setFilterLanguage] = useState("Sidhi");
-  const [filterGender, setFilterGender] = useState("");
+  const [filterLanguage, setFilterLanguage] = useState(
+    sessionStorage.getItem("filterLanguage") || "English"
+  );
+  const [filterGender, setFilterGender] = useState(
+    sessionStorage.getItem("filterGender") || ""
+  );
   const [allLanguages, setAllLanguages] = useState([]);
 
   useEffect(() => {
+    const savedFilterLanguage = sessionStorage.getItem("filterLanguage");
+    const savedFilterGender = sessionStorage.getItem("filterGender");
+
+    if (savedFilterLanguage) {
+      setFilterLanguage(savedFilterLanguage);
+    }
+    if (savedFilterGender) {
+      setFilterGender(savedFilterGender);
+    }
     axios
       .get("http://localhost:8080/doctors")
       .then((response) => {
@@ -22,12 +37,21 @@ function App() {
           }, [])
         );
         uniqueLanguages.add("Sidhi");
-        setAllLanguages(Array.from(uniqueLanguages));
+
+        // Convert the Set to an array, sort it, and then update state
+        const sortedLanguages = Array.from(uniqueLanguages).sort();
+        setAllLanguages(sortedLanguages);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
+
+  useEffect(() => {
+    // Save the current search filters to sessionStorage when they change
+    sessionStorage.setItem("filterLanguage", filterLanguage);
+    sessionStorage.setItem("filterGender", filterGender);
+  }, [filterLanguage, filterGender]);
 
   const handleLanguageChange = (e) => {
     setFilterLanguage(e.target.value);
@@ -47,8 +71,12 @@ function App() {
 
   return (
     <div className="App container mt-5">
-      <h1 className="mb-3">Doctor Search App</h1>
-      <div className="row g-3 align-items-center justify-content-center">
+      <Link to="/" className="home-link">
+        <img src={logoImage} className="app-logo" alt="YYC MedMatch Logo" />{" "}
+        {/* Use the PNG image */}
+      </Link>
+
+      <div className="filters row g-3 align-items-center justify-content-center">
         <div className="col-auto">
           <label htmlFor="languageSelect" className="form-label">
             Filter by Language
@@ -59,7 +87,7 @@ function App() {
             value={filterLanguage}
             onChange={handleLanguageChange}
           >
-            <option value="Sidhi">Sidhi</option>
+            <option value="">All</option>
             {allLanguages.map((language) => (
               <option key={language} value={language}>
                 {language}
@@ -86,7 +114,7 @@ function App() {
       <ul className="list-group list-group-flush mt-4">
         {filteredDoctors.map((doctor) => (
           <li key={doctor._id} className="list-group-item">
-            <Link to={`/doctors/${doctor._id}`} className="App-link">
+            <Link to={`/doctors/${doctor._id}`} className="doctor-link">
               {doctor.name}
             </Link>{" "}
             - Language: {doctor.languages.join(", ")}, Gender: {doctor.gender}
@@ -96,5 +124,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

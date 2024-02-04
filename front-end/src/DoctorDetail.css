@@ -1,0 +1,38 @@
+/* DoctorDetail.css */
+.doctor-detail {
+  max-width: 800px;
+  margin: auto;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  border: none; /* Modern cards often have no border */
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.card-title {
+  color: #d32f2f; /* Theme color for titles */
+  margin-bottom: 1rem;
+}
+
+.card-text {
+  color: #333; /* Dark grey for text for better readability */
+  margin-bottom: 0.5rem;
+}
+
+.card-text strong {
+  color: #212529; /* Slightly darker color for labels */
+}
+
+/* Add media query for responsive design */
+@media (max-width: 768px) {
+  .doctor-detail {
+    padding: 1rem;
+  }
+}

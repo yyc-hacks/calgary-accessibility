@@ -1,54 +1,89 @@
+/* General Background and Layout */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff; /* White background for a clean look */
+  color: #333; /* Dark grey text for readability */
+}
+
+/* Header and Title Styling */
 .App {
   text-align: center;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(to right, #ffefba, #ffffff);
+  padding: 2rem 0; /* Spacious padding at the top and bottom */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-  transition: transform 0.2s; /* smooth transition for the transform property */
+.app-title {
+  font-size: 2.5rem; /* Large, bold title */
+  color: #d32f2f; /* Modern red for emphasis */
+  margin-bottom: 1rem; /* Space below the title */
 }
 
-.App-logo:hover {
-  transform: scale(1.1); /* slightly enlarge the logo on hover */
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Filter Form Styling */
+.filters {
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  border-bottom: 3px solid #61dafb;
+  margin-bottom: 2rem; /* Extra space below filters */
 }
 
-.App-link {
-  color: #61dafb;
-  text-decoration: none; /* removes underline from links */
-  transition: color 0.2s; /* smooth transition for the color property */
+.filters .form-label {
+  font-weight: bold; /* Make labels bold */
+  color: #d32f2f; /* Use theme color for labels */
 }
 
-.App-link:hover {
-  color: #fff; /* changes color on hover */
+.form-select,
+.list-group-item {
+  border-radius: 0.5rem; /* Rounded edges for a softer look */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+/* List Styling */
+.list-group-item {
+  margin: 0.5rem 0; /* Space between list items */
+  transition: transform 0.2s; /* Smooth transition for interaction */
+}
+
+.list-group-item:hover {
+  transform: translateY(-5px); /* Slight raise effect on hover */
+  background-color: #f8f9fa; /* Light background on hover for feedback */
+}
+
+.doctor-link {
+  color: #d32f2f; /* Maintain theme color */
+  font-weight: bold; /* Bold for importance */
+}
+
+.doctor-link:hover {
+  color: #b71c1c; /* Darker shade on hover for interaction feedback */
+  text-decoration: none; /* Remove underline on hover */
+}
+
+.home-link {
+  text-decoration: none; /* Removes underline */
+  color: #d32f2f; /* Sets the link color */
+}
+
+/* If you want the title color to change on hover */
+.home-link:hover {
+  color: #b71c1c;
+}
+
+/* App.css */
+.app-logo {
+  width: 300px; /* Adjust width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-bottom: 1rem;
+}
+
+/* Since it's a link, you might want to remove the underline */
+.home-link {
+  text-decoration: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .filters .col-auto {
+    width: 100%;
+    max-width: none;
   }
 }

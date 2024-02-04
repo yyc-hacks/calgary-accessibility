@@ -1,127 +1,138 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
-import "./App.css"; // Import custom CSS for additional styling
-
+import { Link, useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 import logoImage from "./logo-no-background.png";
+import backgroundImage from "./doctor.jpg"; // Adjust the path as needed
 
 function App() {
-  const [doctorList, setDoctorList] = useState([]);
-  const [filterLanguage, setFilterLanguage] = useState(
-    sessionStorage.getItem("filterLanguage") || "English"
-  );
-  const [filterGender, setFilterGender] = useState(
-    sessionStorage.getItem("filterGender") || ""
-  );
   const [allLanguages, setAllLanguages] = useState([]);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [selectedGenders, setSelectedGenders] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const savedFilterLanguage = sessionStorage.getItem("filterLanguage");
-    const savedFilterGender = sessionStorage.getItem("filterGender");
-
-    if (savedFilterLanguage) {
-      setFilterLanguage(savedFilterLanguage);
-    }
-    if (savedFilterGender) {
-      setFilterGender(savedFilterGender);
-    }
     axios
       .get("http://localhost:8080/doctors")
       .then((response) => {
-        setDoctorList(response.data);
         const uniqueLanguages = new Set(
-          response.data.reduce((acc, doctor) => {
-            acc.push(...doctor.languages);
-            return acc;
-          }, [])
+          response.data.flatMap((doctor) => doctor.languages)
         );
-        uniqueLanguages.add("Sidhi");
-
-        // Convert the Set to an array, sort it, and then update state
-        const sortedLanguages = Array.from(uniqueLanguages).sort();
-        setAllLanguages(sortedLanguages);
+        setAllLanguages(Array.from(uniqueLanguages).sort());
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  useEffect(() => {
-    // Save the current search filters to sessionStorage when they change
-    sessionStorage.setItem("filterLanguage", filterLanguage);
-    sessionStorage.setItem("filterGender", filterGender);
-  }, [filterLanguage, filterGender]);
-
-  const handleLanguageChange = (e) => {
-    setFilterLanguage(e.target.value);
+  const handleAddLanguage = (e) => {
+    const language = e.target.value;
+    if (language && !selectedLanguages.includes(language)) {
+      setSelectedLanguages([...selectedLanguages, language]);
+    }
+    e.target.value = "";
   };
 
-  const handleGenderChange = (e) => {
-    setFilterGender(e.target.value);
+  const handleRemoveLanguage = (languageToRemove) => {
+    setSelectedLanguages(
+      selectedLanguages.filter((language) => language !== languageToRemove)
+    );
   };
 
-  // Define 'filteredDoctors' here
-  const filteredDoctors = doctorList.filter((doctor) => {
-    const languageMatch =
-      !filterLanguage || doctor.languages.includes(filterLanguage);
-    const genderMatch = !filterGender || doctor.gender === filterGender;
-    return languageMatch && genderMatch;
-  });
+  const handleGenderChange = (gender) => {
+    setSelectedGenders((prevGenders) =>
+      prevGenders.includes(gender)
+        ? prevGenders.filter((g) => g !== gender)
+        : [...prevGenders, gender]
+    );
+  };
+
+  const handleSearch = () => {
+    const languageQuery = selectedLanguages
+      .map((lang) => `language=${encodeURIComponent(lang)}`)
+      .join("&");
+    const genderQuery = selectedGenders
+      .map((gender) => `gender=${encodeURIComponent(gender)}`)
+      .join("&");
+    navigate(`/search?${languageQuery}&${genderQuery}`);
+  };
 
   return (
-    <div className="App container mt-5">
-      <Link to="/" className="home-link">
-        <img src={logoImage} className="app-logo" alt="YYC MedMatch Logo" />{" "}
-        {/* Use the PNG image */}
-      </Link>
+    <div className="App">
+      {/* Background Image */}
+      <div className="background-image"></div>
 
-      <div className="filters row g-3 align-items-center justify-content-center">
-        <div className="col-auto">
-          <label htmlFor="languageSelect" className="form-label">
-            Filter by Language
-          </label>
+      {/* Container for Content */}
+      <div className="container mt-5 app-content">
+        <Link to="/" className="home-link">
+          <img src={logoImage} className="app-logo" alt="YYC MedMatch Logo" />
+        </Link>
+        <div className="search-filters">
           <select
-            id="languageSelect"
-            className="form-select"
-            value={filterLanguage}
-            onChange={handleLanguageChange}
+            className="form-select mb-3"
+            onChange={handleAddLanguage}
+            defaultValue=""
           >
-            <option value="">All</option>
-            {allLanguages.map((language) => (
-              <option key={language} value={language}>
-                {language}
-              </option>
+            <option value="" disabled>
+              Add Language
+            </option>
+            {allLanguages.map(
+              (language) =>
+                !selectedLanguages.includes(language) && (
+                  <option key={language} value={language}>
+                    {language}
+                  </option>
+                )
+            )}
+          </select>
+
+          <div className="selected-languages mb-3">
+            {selectedLanguages.map((language) => (
+              <div key={language} className="badge bg-secondary me-2">
+                {language}{" "}
+                <span
+                  className="remove-language"
+                  onClick={() => handleRemoveLanguage(language)}
+                  style={{ cursor: "pointer" }}
+                >
+                  x
+                </span>
+              </div>
             ))}
-          </select>
-        </div>
-        <div className="col-auto">
-          <label htmlFor="genderSelect" className="form-label">
-            Filter by Gender
-          </label>
-          <select
-            id="genderSelect"
-            className="form-select"
-            value={filterGender}
-            onChange={handleGenderChange}
+          </div>
+          <div className="gender-selection mb-3">
+            <label className="form-label">Filter by Gender:</label>
+            <div>
+              {["Male", "Female", "Other"].map((gender) => (
+                <div key={gender} className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`gender-${gender}`}
+                    value={gender}
+                    checked={selectedGenders.includes(gender)}
+                    onChange={() => handleGenderChange(gender)}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor={`gender-${gender}`}
+                  >
+                    {gender}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={handleSearch}
+            className="btn btn-primary search-button"
           >
-            <option value="">All</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
+            Search
+          </button>
         </div>
       </div>
-      <ul className="list-group list-group-flush mt-4">
-        {filteredDoctors.map((doctor) => (
-          <li key={doctor._id} className="list-group-item">
-            <Link to={`/doctors/${doctor._id}`} className="doctor-link">
-              {doctor.name}
-            </Link>{" "}
-            - Language: {doctor.languages.join(", ")}, Gender: {doctor.gender}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
+
 export default App;

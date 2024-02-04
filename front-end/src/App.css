@@ -1,89 +1,118 @@
-/* General Background and Layout */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap");
+
 body,
 html {
+  font-family: "Open Sans", sans-serif;
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fff; /* White background for a clean look */
-  color: #333; /* Dark grey text for readability */
+  height: 100%;
+  background: #f5f5f5;
+  overflow-x: hidden;
 }
 
-/* Header and Title Styling */
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("./doctor.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  z-index: -1;
+}
+
 .App {
-  text-align: center;
-  padding: 2rem 0; /* Spacious padding at the top and bottom */
-}
-
-.app-title {
-  font-size: 2.5rem; /* Large, bold title */
-  color: #d32f2f; /* Modern red for emphasis */
-  margin-bottom: 1rem; /* Space below the title */
-}
-
-/* Filter Form Styling */
-.filters {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 2rem; /* Extra space below filters */
+  z-index: 2;
+  padding: 2rem 0;
 }
 
-.filters .form-label {
-  font-weight: bold; /* Make labels bold */
-  color: #d32f2f; /* Use theme color for labels */
-}
-
-.form-select,
-.list-group-item {
-  border-radius: 0.5rem; /* Rounded edges for a softer look */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
-
-/* List Styling */
-.list-group-item {
-  margin: 0.5rem 0; /* Space between list items */
-  transition: transform 0.2s; /* Smooth transition for interaction */
-}
-
-.list-group-item:hover {
-  transform: translateY(-5px); /* Slight raise effect on hover */
-  background-color: #f8f9fa; /* Light background on hover for feedback */
-}
-
-.doctor-link {
-  color: #d32f2f; /* Maintain theme color */
-  font-weight: bold; /* Bold for importance */
-}
-
-.doctor-link:hover {
-  color: #b71c1c; /* Darker shade on hover for interaction feedback */
-  text-decoration: none; /* Remove underline on hover */
-}
-
-.home-link {
-  text-decoration: none; /* Removes underline */
-  color: #d32f2f; /* Sets the link color */
-}
-
-/* If you want the title color to change on hover */
-.home-link:hover {
-  color: #b71c1c;
-}
-
-/* App.css */
 .app-logo {
-  width: 300px; /* Adjust width as needed */
-  height: auto; /* Maintain aspect ratio */
+  width: 300px;
+  height: auto;
   margin-bottom: 1rem;
 }
 
-/* Since it's a link, you might want to remove the underline */
 .home-link {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 2rem;
   text-decoration: none;
 }
 
-/* Responsive Adjustments */
+.search-filters {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-button {
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.custom-select {
+  margin-bottom: 1rem;
+}
+
+.selected-languages .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.5em 0.75em;
+  margin-right: 0.5rem;
+  background-color: #e9ecef;
+  border-radius: 15px;
+}
+
+.remove-language {
+  display: inline-block;
+  margin-left: 0.5rem;
+  color: #dc3545;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
-  .filters .col-auto {
-    width: 100%;
-    max-width: none;
+  .search-filters {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .app-logo {
+    width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-filters {
+    width: 95%;
+  }
+
+  .app-logo {
+    width: 200px;
   }
 }

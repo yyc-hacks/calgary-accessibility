@@ -60,12 +60,19 @@ function App() {
     <div className="App">
       {/* Background Image */}
       <div className="background-image"></div>
+      <div className="background-overlay"></div>
 
       {/* Container for Content */}
       <div className="container mt-5 app-content">
         <Link to="/" className="home-link">
           <img src={logoImage} className="app-logo" alt="YYC MedMatch Logo" />
         </Link>
+        {/* Descriptive Text */}
+        <h1 className="slogan">Find a family doctor that's right for you</h1>
+        <p className="subtext">
+          Enter a language and/or preferred gender below to find out which
+          family doctors and clinics are taking new patients in your area.
+        </p>
         <div className="search-filters">
           <select
             className="form-select mb-3"
